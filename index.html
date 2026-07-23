@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가락 인사이트 — 대아청과 익일 반입물량 예측</title>
+<meta name="description" content="가락시장 대아청과의 익일 채소 반입물량을 경매 시작 전에 공개 예측합니다. 공개데이터 기반, 매일 갱신, 게시 시점 기록.">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230f6e64'/><rect x='26' y='30' width='48' height='7' rx='3' fill='%23f4f1ea'/><rect x='26' y='47' width='48' height='7' rx='3' fill='%23f4f1ea'/><rect x='26' y='64' width='30' height='7' rx='3' fill='%23f4f1ea'/></svg>">
+</head>
+<body>
+
+<!-- 상단 바 -->
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <span class="mark"></span>
+      <span>가락 인사이트 <small>GARAK INSIGHT</small></span>
+    </div>
+    <div class="livechip"><span class="pulse"></span><span id="chip-stamp">불러오는 중…</span></div>
+  </div>
+</header>
+
+<!-- A. 히어로 -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-head reveal">
+      <div>
+        <h1>오늘 저녁 경매,<br><span class="accent">얼마나 들어올까.</span></h1>
+        <p class="hero-sub">가락시장 <b>대아청과</b>의 익일 채소 반입물량을 경매가 시작되기 전에 예측해 공개합니다.
+          공개데이터만 사용하며, 매일 게시하고, 맞았는지 틀렸는지를 그대로 기록합니다.</p>
+      </div>
+      <div class="stamp" id="stamp">
+        <div class="fresh"><span class="pulse"></span> 실시간 가동</div>
+      </div>
+    </div>
+
+    <div class="hero-band reveal" id="band"></div>
+
+    <div class="cards" id="cards"></div>
+
+    <p class="disclaimer-inline">
+      <b>구간이란?</b>
+      각 예측의 막대는 <b>80% 예측구간</b>입니다 — 실제 반입량이 이 범위 안에 들어올 확률이 10번 중 8번이라는 뜻입니다.
+      세로선은 중앙 예측값입니다.
+    </p>
+  </div>
+</section>
+
+<!-- B. 전향 기록 -->
+<section id="record">
+  <div class="wrap">
+    <div class="eyebrow reveal">전향 예측 기록</div>
+    <h2 class="sec-title reveal">맞은 날도, 틀린 날도 지우지 않습니다.</h2>
+    <p class="sec-lead reveal">모든 예측은 <b>경매가 열리기 전</b>에 게시되고, 게시 시각은 코드 저장소에 커밋으로 남습니다.
+      사후에 고른 숫자가 아니라, 사건 전에 공개된 기록입니다.</p>
+
+    <div class="track-stats reveal" id="track-stats"></div>
+    <div id="ledger-wrap" class="reveal"></div>
+
+    <div class="commit-note">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="1" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="23" y2="12"/></svg>
+      각 예측의 게시 시점은 Git 커밋 이력으로 검증할 수 있습니다.
+    </div>
+  </div>
+</section>
+
+<!-- C. 품목 상세 -->
+<section id="detail">
+  <div class="wrap">
+    <div class="eyebrow reveal">품목 상세 · 과거 검증</div>
+    <h2 class="sec-title reveal">지난 예측은 실제와 얼마나 맞았나.</h2>
+    <p class="sec-lead reveal">2021년 이후 out-of-sample 검증 결과입니다. 회색 밴드가 80% 예측구간,
+      검은 선이 실제 반입량입니다. 밴드 밖으로 나간 점이 빗나간 예측입니다.</p>
+
+    <div class="item-controls reveal" id="item-chips"></div>
+    <div class="chart-wrap reveal">
+      <div class="chart-head">
+        <div class="ttl" id="chart-title">—</div>
+        <div class="chart-metrics" id="chart-metrics"></div>
+      </div>
+      <div class="chart-box"><canvas id="chart"></canvas></div>
+      <div class="legend">
+        <span><i class="actual"></i> 실제 반입량</span>
+        <span><i class="band"></i> 80% 예측구간</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- D. 신뢰 근거 -->
+<section id="trust">
+  <div class="wrap">
+    <div class="eyebrow reveal">이 예측을 믿어야 하는 이유</div>
+    <h2 class="sec-title reveal">주장하기 전에, 먼저 검증했습니다.</h2>
+
+    <div class="trust-grid reveal" id="trust-grid"></div>
+
+    <div class="acc reveal">
+      <details>
+        <summary><span class="ic">▸</span> 우리가 스스로 폐기한 가설 3개 <span class="tag">폐기</span></summary>
+        <div class="body">
+          예측이 잘 될 것 같았지만, 검증에서 살아남지 못해 <b>버린</b> 가설들입니다.
+          <ul>
+            <li><b>산지 기상</b> — "공개 기상으로 산지 작황을 읽는다"는 논리. 그러나 산지 기상과 <span class="num">서울(비산지)</span> 기상이 통계적으로 구분되지 않았습니다(플라시보 실패). 폐기.</li>
+            <li><b>전자송품장</b> — 출하예정 물량이 반입을 미리 알려줄 것으로 봤으나 예측력이 확인되지 않았습니다. 판정 유보.</li>
+            <li><b>물량 경유 2단 구조</b> — 기각. 다만 "물량 예측 자체"는 오히려 가격보다 잘 되어 <b>주 타깃으로 채택</b>했습니다.</li>
+          </ul>
+        </div>
+      </details>
+      <details>
+        <summary><span class="ic">▸</span> 우리가 찾아낸 우리 결함 9건 <span class="tag fix">수정 완료</span></summary>
+        <div class="body">
+          적대적 검증(에이전트 52종)으로 스스로 찾아 고친 결함들입니다.
+          <ul>
+            <li>시즌 경계를 넘는 시차 계산 → 블록 단위로 차단</li>
+            <li>테스트 구간으로 피처를 고른 편향 → 검증구간 분리(2019~2020)</li>
+            <li><b>MAPE의 함정</b> — 전일가에 <span class="num">0.98</span>만 곱해도 이깁니다. 그래서 상수 몫을 분리해 보고합니다.</li>
+            <li>미학습 구간이 조용히 기준선으로 대체되던 문제 → 공통 유효 표본으로 통일 … 외 5건</li>
+          </ul>
+        </div>
+      </details>
+      <details>
+        <summary><span class="ic">▸</span> 개선폭은 우연이 아닙니다 (통계 검정) <span class="tag fix">유의</span></summary>
+        <div class="body">
+          21개 품목을 동시에 보므로 다중비교(FDR) 보정을 적용했고, 같은 날 품목들이 함께 움직이는 것을 감안해 날짜 클러스터 오차를 썼습니다.
+          <ul>
+            <li>Diebold-Mariano <span class="num">pooled t = 7.60</span>, <span class="num">p &lt; 10⁻¹³</span></li>
+            <li>21개 중 <span class="num">19개 개선 방향</span>, 보정 후 <span class="num">11개 유의</span>, 유의한 악화 <span class="num">0개</span></li>
+          </ul>
+          <small>※ 이 검정은 "모델이 항상 우월하다"가 아니라 "이 기간에 두 예측의 평균 정확도가 달랐다"를 뜻합니다.</small>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- E. 왜 대아청과 -->
+<section id="why">
+  <div class="wrap">
+    <div class="eyebrow reveal">왜 대아청과인가</div>
+    <h2 class="sec-title reveal">물량을 지켜도, 수익은 지켜지지 않았습니다.</h2>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <h3>물량은 그대로, 거래액은 −11%</h3>
+        <p>2024→2025년 반입 물량은 <span class="num">−0.5%</span>였지만 거래액은 <span class="num">471억원</span> 줄었습니다.
+          가격 하락 국면에서 "물량 확보가 전부"라는 통념이 깨집니다.</p>
+        <img src="figures/06_물량대비수익.png" alt="물량 대비 거래액 추이" loading="lazy">
+      </div>
+      <div class="why-card reveal">
+        <h3>점유율 하락은 경쟁력이 아니라 품목 제한</h3>
+        <p>1년간 점유율이 <span class="num">−4.6%p</span> 빠졌는데, 분해하면 전부
+          <b>취급할 수 없는 품목이 성장</b>한 탓(<span class="num">−5.16%p</span>)입니다.
+          자기 품목 안에서는 오히려 <span class="num">+0.53%p</span> 올랐습니다.</p>
+        <img src="figures/09_점유율분해.png" alt="점유율 변화 분해" loading="lazy">
+      </div>
+    </div>
+    <p class="sec-lead reveal" style="margin-top:22px">
+      품목확대는 2026년 말까지 제도적으로 막혀 있습니다. 남은 성장 수단은
+      <b>제한된 품목 안에서의 운영 효율</b> 하나뿐이고 — 그 한 수단을 데이터로 키우는 것이 이 제안입니다.</p>
+  </div>
+</section>
+
+<!-- F. 제안 -->
+<section id="ask" class="ask">
+  <div class="wrap">
+    <div class="eyebrow reveal">협업 제안</div>
+    <h2 class="sec-title reveal">요청하는 것은 자금이 아니라, 데이터 3종입니다.</h2>
+    <p class="sec-lead reveal">공개데이터로 갈 수 있는 데까지 왔습니다. 여기가 그 한계이고, 다음은 내부 데이터가 있어야 합니다.</p>
+    <div class="ask-grid">
+      <div class="ask-card reveal"><div class="no">01</div><h4>출하자 마스터</h4><p>산지 조직·개인을 구분해 출하 신뢰도를 학습합니다.</p></div>
+      <div class="ask-card reveal"><div class="no">02</div><h4>등급·규격 상세</h4><p>공개 API보다 세밀한 품위 정보로 가격 분산을 설명합니다.</p></div>
+      <div class="ask-card reveal"><div class="no">03</div><h4>경매 운영 로그</h4><p>경매사의 판단·순서 결정 이력을 학습해 운영을 지원합니다.</p></div>
+    </div>
+    <div class="ask-foot reveal">
+      <b>확장.</b> 소멸성 자산의 수요 예측이라는 코어는 골프장 티타임·리조트 객실에도 그대로 이식됩니다.
+      필요한 것은 새 모델이 아니라 예약 이력뿐입니다.
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="brand-lg">가락 인사이트</div>
+      <p>가락시장 대아청과 익일 반입물량 예측 · 2026 창조경제혁신센터 오픈이노베이션(호반그룹) 협업 제안 시연</p>
+      <p class="disc" id="foot-stamp"></p>
+    </div>
+    <div>
+      <h5>데이터 출처</h5>
+      <ul>
+        <li>공공데이터포털</li>
+        <li>한국농수산식품유통공사(aT) 전국 공영도매시장</li>
+        <li>기상청 지상(ASOS) 일자료</li>
+      </ul>
+    </div>
+    <div>
+      <h5>고지</h5>
+      <ul>
+        <li>본 예측은 공개데이터 기반 연구 시연이며,</li>
+        <li>거래·투자 판단의 근거가 아닙니다.</li>
+      </ul>
+      <p class="disc">데이터 12.5년 · 224만 건 · 공식 정산 100% 일치 검증</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
