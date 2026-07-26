@@ -81,27 +81,56 @@ async function renderRecord() {
   }
 
   const impGood = S.improve > 0;
-  $('#track-stats').innerHTML = [
-    ['가동 일수', `${S.n_days}<small style="font-size:14px;color:var(--ink-3)">일</small>`, ''],
-    ['구간 적중률', `${S.coverage}%`, `목표 80% · 예측 ${S.n_items}건`, 'green'],
-    ['전일가 대비 개선', `${impGood ? '+' : ''}${S.improve}%`, `모델 ${S.mape_model}% vs 전일 ${S.mape_naive}%`, impGood ? 'green' : ''],
-  ].map(([k, v, sub, c]) =>
+  const sg = n => (n >= 0 ? '+' : '') + n;
+  const C = S.core, K = S.kg;
+  const tiles = [
+    ['가동 일수', `${S.n_days}<small style="font-size:14px;color:var(--ink-3)">일</small>`,
+      `예측 ${S.n_items}건 · 모델 우세 ${S.wins ?? '—'}건`],
+    ['개선폭 (거래액가중)', `${sg(S.improve)}%`,
+      `모델 ${S.mape_model}% vs 전일 ${S.mape_naive}%` +
+      (S.simple ? ` · 단순평균 ${sg(S.simple.improve)}%` : ''), impGood ? 'green' : ''],
+  ];
+  if (C) tiles.push(['핵심 품목 개선폭', `${sg(C.improve)}%`,
+    `${C.items.join('·')} — 연 거래액 ${C.annual_share}% · ${C.wins}/${C.n_items}승`,
+    C.improve > 0 ? 'green' : '']);
+  tiles.push(['구간 적중률', `${S.coverage}%`, `목표 80%`, 'green']);
+  if (K) tiles.push(['최소 오차', `${won(K.best_err_kg)}<small style="font-size:14px;color:var(--ink-3)">kg</small>`,
+    `평균 ${won(K.mae_kg)}kg · 총량 ${sg(K.total_err_pct)}%`]);
+  $('#track-stats').innerHTML = tiles.map(([k, v, sub, c]) =>
     `<div class="stat"><div class="k">${k}</div><div class="v ${c || ''}">${v}</div><div class="sub">${sub}</div></div>`).join('');
 
   const scored = T.filter(r => r.scored).slice(-14).reverse();
   const rows = scored.map(r => {
     const badge = `<span class="badge ${r.hit >= r.miss ? 'hit' : 'miss'}">${r.hit}/${r.hit + r.miss} 적중</span>`;
+    const A = r.items.reduce((s, i) => s + (i.actual || 0), 0);
+    const P = r.items.reduce((s, i) => s + i.point, 0);
+    const e = P - A, ep = A ? e / A * 100 : 0;
     return `<tr>
       <td>${dayLabel(r.target_session)}</td>
-      <td class="num">${won(ton(r.items.reduce((s, i) => s + (i.actual || 0), 0)))}</td>
-      <td class="num">${won(ton(r.items.reduce((s, i) => s + i.point, 0)))}</td>
+      <td class="num">${won(Math.round(A))}</td>
+      <td class="num">${won(Math.round(P))}</td>
+      <td class="num" style="color:${Math.abs(ep) < 10 ? 'var(--green)' : 'var(--ink-2)'}">
+        ${e >= 0 ? '+' : '−'}${won(Math.abs(Math.round(e)))}<small style="color:var(--ink-3)"> (${ep >= 0 ? '+' : ''}${ep.toFixed(1)}%)</small></td>
       <td>${badge}</td>
       <td style="color:var(--ink-3);font-family:var(--mono);font-size:12px">${fmtWhen(r.published_at).slice(5)}</td>
     </tr>`;
   }).join('');
+
+  // 품목 단위 최정밀 적중 — 톤 반올림이 가리는 kg 수준의 정확도.
+  // 절대 kg 이 아니라 오차율로 고른다(절대값으로 뽑으면 소량 품목만 올라온다).
+  const best = scored.flatMap(r => r.items.filter(i => i.actual)
+    .map(i => ({ ...i, sess: r.target_session })))
+    .sort((a, b) => (a.ape_model ?? 9) - (b.ape_model ?? 9)).slice(0, 3);
+  const bestHtml = best.length && best[0].err_kg != null
+    ? `<div class="kg-note">가장 정밀했던 적중 —
+        ${best.map(b => `<b>${b.item}</b> ${won(Math.round(b.point))} → 실측 ${won(Math.round(b.actual))}kg
+          <span class="err">(오차 ${won(Math.abs(Math.round(b.err_kg)))}kg · ${(b.ape_model * 100).toFixed(1)}%)</span>`).join(' · ')}</div>`
+    : '';
+
   $('#ledger-wrap').innerHTML = `<table class="ledger">
-    <thead><tr><th>대상 세션</th><th style="text-align:right">실제(톤)</th><th style="text-align:right">예측(톤)</th><th>구간 적중</th><th>게시시각</th></tr></thead>
-    <tbody>${rows}</tbody></table>`;
+    <thead><tr><th>대상 세션</th><th style="text-align:right">실제(kg)</th><th style="text-align:right">예측(kg)</th>
+      <th style="text-align:right">오차</th><th>구간 적중</th><th>게시시각</th></tr></thead>
+    <tbody>${rows}</tbody></table>${bestHtml}`;
 }
 
 /* ---------------- C. 품목 상세 차트 ---------------- */
