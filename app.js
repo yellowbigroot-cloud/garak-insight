@@ -199,7 +199,8 @@ async function renderTrust() {
   const H = await j('data/headline.json', {});
   $('#trust-grid').innerHTML = [
     ['데이터 기간', `${H.years ?? '12.5'}<small style="font-size:14px">년</small>`, `거래 ${won((H.n_rows / 1e4 | 0) / 100)}백만 건`],
-    ['공식 정산 대조', `100<small style="font-size:14px">%</small>`, '2,593일 오차 0.0000%'],
+    ['공식 정산 대조 (데이터 검산)', `100<small style="font-size:14px">%</small>`,
+      '2,593일 오차 0.0000% · 반품·정정 반영. 이건 예측 성능이 아니라 집계 정확도입니다'],
     ['개선폭 (거래액가중)', `+${H.improve ?? '—'}<small style="font-size:14px">%</small>`, '전일가 대비, 검증구간'],
     ['통계 검정', `p<10⁻¹³`, `${H.dm_sig}/${H.dm_total}품목 유의`],
   ].map(([k, v, s]) => `<div class="stat"><div class="k">${k}</div><div class="v green">${v}</div><div class="sub">${s}</div></div>`).join('');
