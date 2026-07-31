@@ -1,24 +1,24 @@
 {
- "n_days": 5,
- "n_items": 40,
- "coverage": 85.0,
+ "n_days": 6,
+ "n_items": 49,
+ "coverage": 83.7,
  "basis": "amount_weighted",
- "mape_model": 11.82,
- "mape_naive": 22.41,
- "improve": 47.3,
+ "mape_model": 12.33,
+ "mape_naive": 20.64,
+ "improve": 40.3,
  "simple": {
-  "mape_model": 13.95,
-  "mape_naive": 20.37,
-  "improve": 31.5
+  "mape_model": 15.25,
+  "mape_naive": 20.51,
+  "improve": 25.6
  },
- "wins": 25,
+ "wins": 28,
  "kg": {
-  "mae_kg": 22268,
-  "median_err_kg": 4890,
+  "mae_kg": 22382,
+  "median_err_kg": 6871,
   "best_err_kg": 48,
-  "total_point_kg": 5714848,
-  "total_actual_kg": 6009267,
-  "total_err_pct": -4.9
+  "total_point_kg": 6956052,
+  "total_actual_kg": 7324530,
+  "total_err_pct": -5.0
  },
  "core": {
   "items": [
@@ -26,11 +26,11 @@
    "양배추(일반)"
   ],
   "annual_share": 40.9,
-  "n_items": 10,
-  "wins": 9,
-  "coverage": 80.0,
-  "mape_model": 7.89,
-  "mape_naive": 17.25,
-  "improve": 54.2
+  "n_items": 12,
+  "wins": 10,
+  "coverage": 75.0,
+  "mape_model": 8.86,
+  "mape_naive": 16.39,
+  "improve": 45.9
  }
 }
