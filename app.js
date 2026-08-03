@@ -39,7 +39,7 @@ async function renderHero() {
   $('#band').innerHTML = [
     ['예측 활성 품목', `${L.items.length}<small>개</small>`],
     ['익일 총 반입 예측', `${won(ton(L.total_point))}<small>톤</small>`],
-    ['검증 개선폭 (거래액가중)', `+${H.improve ?? '—'}<small>%</small>`],
+    ['과거 데이터 개선폭', `+${H.improve ?? '—'}<small>%</small>`],
     ['구간 적중률 (검증)', `${H.coverage ?? '—'}<small>%</small>`],
   ].map(([k, v]) => `<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
 
@@ -83,19 +83,30 @@ async function renderRecord() {
   const impGood = S.improve > 0;
   const sg = n => (n >= 0 ? '+' : '') + n;
   const C = S.core, K = S.kg;
+  // 빗나간 양 = Σ|예측−실제| (품목별, 상쇄 없음). 제안서와 같은 지표를 화면에서도 쓴다.
+  // 총량 순오차(total_err_pct)는 과대·과소가 서로 지워져 관행 기준과 구분되지 않으므로 노출하지 않는다.
+  const judged = T.filter(r => r.scored).flatMap(r => r.items || []).filter(i => i.actual != null);
+  const ton = kg => Math.round(kg / 1000).toLocaleString();
+  const sae  = judged.reduce((a, i) => a + Math.abs(i.point - i.actual), 0);
+  const saeN = judged.reduce((a, i) => a + Math.abs(i.naive - i.actual), 0);
+  const cut  = saeN ? (1 - sae / saeN) * 100 : 0;
+  const core = judged.filter(i => (C?.items || []).includes(i.item));
+  const cSae  = core.reduce((a, i) => a + Math.abs(i.point - i.actual), 0);
+  const cSaeN = core.reduce((a, i) => a + Math.abs(i.naive - i.actual), 0);
+  const cCut  = cSaeN ? (1 - cSae / cSaeN) * 100 : 0;
+
   const tiles = [
     ['가동 일수', `${S.n_days}<small style="font-size:14px;color:var(--ink-3)">일</small>`,
-      `예측 ${S.n_items}건 · 모델 우세 ${S.wins ?? '—'}건`],
-    ['개선폭 (거래액가중)', `${sg(S.improve)}%`,
-      `모델 ${S.mape_model}% vs 전일 ${S.mape_naive}%` +
-      (S.simple ? ` · 단순평균 ${sg(S.simple.improve)}%` : ''), impGood ? 'green' : ''],
+      `사전 공개 후 채점한 예측 ${S.n_items}건`],
+    ['빗나간 양', `${ton(sae)}<small style="font-size:14px;color:var(--ink-3)">톤</small>`,
+      `어제와 같다고 봤다면 ${ton(saeN)}톤 — ${cut.toFixed(0)}% 줄였습니다`, cut > 0 ? 'green' : ''],
   ];
-  if (C) tiles.push(['핵심 품목 개선폭', `${sg(C.improve)}%`,
-    `${C.items.join('·')} — 연 거래액 ${C.annual_share}% · ${C.wins}/${C.n_items}승`,
-    C.improve > 0 ? 'green' : '']);
-  tiles.push(['구간 적중률', `${S.coverage}%`, `목표 80%`, 'green']);
-  if (K) tiles.push(['최소 오차', `${won(K.best_err_kg)}<small style="font-size:14px;color:var(--ink-3)">kg</small>`,
-    `평균 ${won(K.mae_kg)}kg · 총량 ${sg(K.total_err_pct)}%`]);
+  if (C && core.length) tiles.push(['핵심 품목', `${ton(cSae)}<small style="font-size:14px;color:var(--ink-3)">톤</small>`,
+    `${C.items.join('·')} (연 거래액 ${C.annual_share}%) — 어제 기준 ${ton(cSaeN)}톤, ${cCut.toFixed(0)}% 줄였습니다`,
+    cCut > 0 ? 'green' : '']);
+  tiles.push(['범위 적중률', `${S.coverage}%`, `10번 중 8번을 목표로 설계`, 'green']);
+  if (K) tiles.push(['가장 정확했던 예측', `${won(K.best_err_kg)}<small style="font-size:14px;color:var(--ink-3)">kg</small>`,
+    `차이 · 건당 평균 ${won(K.mae_kg)}kg`]);
   $('#track-stats').innerHTML = tiles.map(([k, v, sub, c]) =>
     `<div class="stat"><div class="k">${k}</div><div class="v ${c || ''}">${v}</div><div class="sub">${sub}</div></div>`).join('');
 
@@ -201,7 +212,7 @@ async function renderTrust() {
     ['데이터 기간', `${H.years ?? '12.5'}<small style="font-size:14px">년</small>`, `거래 ${won((H.n_rows / 1e4 | 0) / 100)}백만 건`],
     ['공식 정산 대조 (데이터 검산)', `100<small style="font-size:14px">%</small>`,
       '2,593일 오차 0.0000% · 반품·정정 반영. 이건 예측 성능이 아니라 집계 정확도입니다'],
-    ['개선폭 (거래액가중)', `+${H.improve ?? '—'}<small style="font-size:14px">%</small>`, '전일가 대비, 검증구간'],
+    ['과거 데이터 개선폭', `+${H.improve ?? '—'}<small style="font-size:14px">%</small>`, '어제와 같다고 봤을 때 대비'],
     ['통계 검정', `p<10⁻¹³`, `${H.dm_sig}/${H.dm_total}품목 유의`],
   ].map(([k, v, s]) => `<div class="stat"><div class="k">${k}</div><div class="v green">${v}</div><div class="sub">${s}</div></div>`).join('');
 }
