@@ -1,24 +1,24 @@
 {
- "n_days": 8,
- "n_items": 65,
- "coverage": 83.1,
+ "n_days": 9,
+ "n_items": 73,
+ "coverage": 83.6,
  "basis": "amount_weighted",
- "mape_model": 14.65,
- "mape_naive": 21.1,
- "improve": 30.6,
+ "mape_model": 14.43,
+ "mape_naive": 20.44,
+ "improve": 29.4,
  "simple": {
-  "mape_model": 18.21,
-  "mape_naive": 22.14,
-  "improve": 17.7
+  "mape_model": 18.1,
+  "mape_naive": 21.58,
+  "improve": 16.1
  },
- "wins": 35,
+ "wins": 40,
  "kg": {
-  "mae_kg": 27154,
-  "median_err_kg": 7822,
-  "best_err_kg": 48,
-  "total_point_kg": 9494991,
-  "total_actual_kg": 9921116,
-  "total_err_pct": -4.3
+  "mae_kg": 26282,
+  "median_err_kg": 10817,
+  "best_err_kg": 26,
+  "total_point_kg": 10834624,
+  "total_actual_kg": 11166653,
+  "total_err_pct": -3.0
  },
  "core": {
   "items": [
@@ -26,12 +26,12 @@
    "양배추(일반)",
    "고냉지배추"
   ],
-  "annual_share": 46.7,
-  "n_items": 17,
-  "wins": 13,
-  "coverage": 76.5,
-  "mape_model": 10.95,
-  "mape_naive": 17.68,
-  "improve": 38.1
+  "annual_share": 46.6,
+  "n_items": 20,
+  "wins": 15,
+  "coverage": 80.0,
+  "mape_model": 10.31,
+  "mape_naive": 16.61,
+  "improve": 37.9
  }
 }
