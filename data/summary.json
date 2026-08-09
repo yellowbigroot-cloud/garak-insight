@@ -1,24 +1,24 @@
 {
- "n_days": 11,
- "n_items": 91,
- "coverage": 81.3,
+ "n_days": 12,
+ "n_items": 100,
+ "coverage": 83.0,
  "basis": "amount_weighted",
- "mape_model": 16.27,
- "mape_naive": 20.34,
- "improve": 20.0,
+ "mape_model": 16.59,
+ "mape_naive": 19.61,
+ "improve": 15.4,
  "simple": {
-  "mape_model": 20.46,
-  "mape_naive": 21.18,
-  "improve": 3.4
+  "mape_model": 20.64,
+  "mape_naive": 20.56,
+  "improve": -0.4
  },
- "wins": 45,
+ "wins": 49,
  "kg": {
-  "mae_kg": 27129,
-  "median_err_kg": 11644,
+  "mae_kg": 27310,
+  "median_err_kg": 12127,
   "best_err_kg": 26,
-  "total_point_kg": 13349843,
-  "total_actual_kg": 13468355,
-  "total_err_pct": -0.9
+  "total_point_kg": 14497831,
+  "total_actual_kg": 14595496,
+  "total_err_pct": -0.7
  },
  "core": {
   "items": [
@@ -27,11 +27,11 @@
    "고냉지배추"
   ],
   "annual_share": 46.6,
-  "n_items": 26,
-  "wins": 18,
-  "coverage": 80.8,
-  "mape_model": 11.43,
-  "mape_naive": 16.84,
-  "improve": 32.1
+  "n_items": 29,
+  "wins": 20,
+  "coverage": 82.8,
+  "mape_model": 11.18,
+  "mape_naive": 15.94,
+  "improve": 29.9
  }
 }
