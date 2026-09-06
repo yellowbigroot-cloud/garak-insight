@@ -5956,7 +5956,7 @@
   "published_at": "2026-09-04T15:00:09+09:00",
   "source": "realtime",
   "status": "ok",
-  "scored": false,
+  "scored": true,
   "items": [
    {
     "item": "대파(일반)",
@@ -5968,7 +5968,14 @@
     "hi": 198001.9929826601,
     "naive": 162750.0,
     "naive_c": 156809.625,
-    "n_train": 3835
+    "n_train": 3835,
+    "actual": 184900.0,
+    "actual_amount": 297821400.0,
+    "err_kg": -15337.09474369706,
+    "err_kg_naive": -22150.0,
+    "in_interval": true,
+    "ape_model": 0.08294805161545192,
+    "ape_naive": 0.11979448350459708
    },
    {
     "item": "양배추(일반)",
@@ -5980,7 +5987,14 @@
     "hi": 347848.93555116473,
     "naive": 277256.0,
     "naive_c": 262422.804,
-    "n_train": 2208
+    "n_train": 2208,
+    "actual": 340464.0,
+    "actual_amount": 157849400.0,
+    "err_kg": -35998.38685704069,
+    "err_kg_naive": -63208.0,
+    "in_interval": true,
+    "ape_model": 0.10573331352812836,
+    "ape_naive": 0.18565252126509704
    },
    {
     "item": "고냉지배추",
@@ -5992,7 +6006,14 @@
     "hi": 465556.0773978963,
     "naive": 389080.0,
     "naive_c": 351728.32,
-    "n_train": 600
+    "n_train": 600,
+    "actual": 465690.0,
+    "actual_amount": 282384500.0,
+    "err_kg": -163136.55800655152,
+    "err_kg_naive": -76610.0,
+    "in_interval": false,
+    "ape_model": 0.35031149049056565,
+    "ape_naive": 0.16450857866821275
    },
    {
     "item": "고냉지무",
@@ -6004,7 +6025,14 @@
     "hi": 730504.9546203702,
     "naive": 746440.0,
     "naive_c": 678887.1799999999,
-    "n_train": 602
+    "n_train": 602,
+    "actual": 588120.0,
+    "actual_amount": 263807500.0,
+    "err_kg": -69195.3177758751,
+    "err_kg_naive": 158320.0,
+    "in_interval": true,
+    "ape_model": 0.11765510061870893,
+    "ape_naive": 0.2691967625654628
    },
    {
     "item": "저장배추",
@@ -6016,7 +6044,14 @@
     "hi": 46472.96929338879,
     "naive": 27560.0,
     "naive_c": 24804.0,
-    "n_train": 927
+    "n_train": 927,
+    "actual": 27330.0,
+    "actual_amount": 18517400.0,
+    "err_kg": -4574.305668794637,
+    "err_kg_naive": 230.0,
+    "in_interval": true,
+    "ape_model": 0.16737305776782427,
+    "ape_naive": 0.008415660446395901
    },
    {
     "item": "깐쪽파",
@@ -6028,7 +6063,14 @@
     "hi": 3635.6753906423587,
     "naive": 2755.0,
     "naive_c": 2633.78,
-    "n_train": 3835
+    "n_train": 3835,
+    "actual": 2859.0,
+    "actual_amount": 24518000.0,
+    "err_kg": -76.51100868919184,
+    "err_kg_naive": -104.0,
+    "in_interval": true,
+    "ape_model": 0.026761458093456397,
+    "ape_naive": 0.03637635536901014
    },
    {
     "item": "찰옥수수",
@@ -6040,7 +6082,14 @@
     "hi": 43046.95606095765,
     "naive": 31248.0,
     "naive_c": 28123.2,
-    "n_train": 1201
+    "n_train": 1201,
+    "actual": 35192.0,
+    "actual_amount": 43917100.0,
+    "err_kg": -16834.352446867208,
+    "err_kg_naive": -3944.0,
+    "in_interval": true,
+    "ape_model": 0.47835736664205525,
+    "ape_naive": 0.11207092521027506
    },
    {
     "item": "쪽파(일반)",
@@ -6052,9 +6101,19 @@
     "hi": 6162.779494556347,
     "naive": 4718.0,
     "naive_c": 4269.79,
-    "n_train": 1313
+    "n_train": 1313,
+    "actual": 3523.0,
+    "actual_amount": 15904000.0,
+    "err_kg": 1367.2994872122363,
+    "err_kg_naive": 1195.0,
+    "in_interval": true,
+    "ape_model": 0.3881065816668284,
+    "ape_naive": 0.33919954584161227
    }
-  ]
+  ],
+  "hit": 7,
+  "miss": 1,
+  "scored_at": "2026-09-06T15:01:46+09:00"
  },
  {
   "target_session": "2026-09-07",
